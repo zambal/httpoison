@@ -161,6 +161,7 @@ defmodule HTTPoison.Base do
         case :hackney.request(method, process_url(to_string(url)), process_request_headers(headers),
                               body, hn_options) do
           {:ok, status_code, headers, client} when status_code in [204, 304] ->
+            :hackney.body(client) # Fixes Hackney issue. Hackney should release the socket with a 204 or 304, but actually doesn't do it always
             response(status_code, headers, "")
           {:ok, status_code, headers} -> response(status_code, headers, "")
           {:ok, status_code, headers, client} ->
